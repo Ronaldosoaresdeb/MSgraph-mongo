@@ -1,4 +1,4 @@
-name: Coletar dados Azure e salvar no MongoDB
+name: Graph MongoDB Workflow
 
 on:
   workflow_dispatch: # permite rodar manualmente
