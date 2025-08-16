@@ -19,12 +19,23 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-          
-      - name: Atualizar pacotes e OpenSSL
-        run: sudo apt-get update && sudo apt-get install -y openssl
 
-      - name: Instalar dependências
+      - name: Atualizar pacotes e instalar OpenSSL
+        run: sudo apt-get update && sudo apt-get install -y openssl curl gnupg
+
+      - name: Instalar MongoDB Shell (mongosh)
+        run: |
+          curl -fsSL https://pgp.mongodb.com/server-6.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg --dearmor
+          echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+          sudo apt-get update
+          sudo apt-get install -y mongodb-mongosh
+
+      - name: Instalar dependências do Node
         run: npm install
+
+      - name: Testar conexão MongoDB via Shell
+        run: |
+          mongosh "${{ secrets.MONGODB_URI }}" --eval "db.stats()"
 
       - name: Executar script de coleta
         run: node scripts/coletar.js
