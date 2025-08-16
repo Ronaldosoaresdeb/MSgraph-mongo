@@ -38,7 +38,3 @@ async function main() {
 }
 
 main();
-main().catch(err => {
-  console.error("Erro ao executar o script:", err);
-  process.exit(1);
-});
