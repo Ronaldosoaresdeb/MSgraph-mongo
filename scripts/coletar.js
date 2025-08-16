@@ -20,9 +20,15 @@ async function main() {
 
     const users = await usersResponse.json();
     console.log(`Usuários retornados: ${users.value?.length || 0}`);
-
+    
     // Conectar no MongoDB e salvar
-    const client = new MongoClient(mongoUri);
+    console.log("Conectando ao MongoDB...");
+    const client = new MongoClient(mongoUri, {
+    tls: true,
+    tlsAllowInvalidCertificates: false,
+    serverSelectionTimeoutMS: 10000,
+   });
+
     await client.connect();
     const db = client.db("graphdb");
     const collection = db.collection("usuarios");
