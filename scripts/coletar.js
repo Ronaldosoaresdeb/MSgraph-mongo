@@ -3,8 +3,8 @@ import { MongoClient } from "mongodb";
 
 async function main() {
   try {
-    const mongoUri = process.env.MONGODB_URI;
-
+    //const mongoUri = process.env.MONGODB_URI;
+    const mongoUri = "mongodb+srv://wwwstudiowave:${{ secrets.MONGO_PASS }}@cluster0.revc365.mongodb.net/";
     // Pegar token do Graph via Azure CLI
     const token = execSync(
       'az account get-access-token --resource https://graph.microsoft.com --query accessToken -o tsv',
