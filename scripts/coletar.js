@@ -30,8 +30,8 @@ async function main() {
    });
 
     await client.connect();
-    const db = client.db("graphdb");
-    const collection = db.collection("usuarios");
+    const db = client.db("resorceAzure");
+    const collection = db.collection("azresource");
 
     await collection.insertMany(users.value || []);
     console.log("✅ Dados inseridos no MongoDB");
