@@ -1,7 +1,7 @@
 name: Graph MongoDB Workflow
 
 on:
-  workflow_dispatch: # permite rodar manualmente
+  workflow_dispatch:
 
 jobs:
   coletar:
@@ -35,7 +35,7 @@ jobs:
 
       - name: Testar conexão MongoDB via Shell
         run: |
-          mongosh "${{ secrets.MONGODB_URI }}" --eval "db.stats()"
+          mongosh "mongodb+srv://cluster0.revc365.mongodb.net/" --apiVersion 1 --username wwwstudiowave --password "${{ secrets.MONGO_PASS }}" --eval "db.stats()"
 
       - name: Executar script de coleta
         run: node scripts/coletar.js
