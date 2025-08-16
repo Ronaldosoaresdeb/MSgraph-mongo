@@ -23,9 +23,8 @@ async function main() {
     
     // Conectar no MongoDB e salvar
     console.log("Conectando ao MongoDB...");
+   
     const client = new MongoClient(mongoUri, {
-    tls: true,
-    tlsAllowInvalidCertificates: false,
     serverSelectionTimeoutMS: 10000,
    });
 
