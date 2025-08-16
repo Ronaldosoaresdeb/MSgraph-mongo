@@ -1,45 +1,24 @@
-// scripts/coletar.js
+import { execSync } from "child_process";
 import { MongoClient } from "mongodb";
-import fetch from "node-fetch";
 
 async function main() {
   try {
-    // Variáveis de ambiente injetadas pelo workflow
-    const tenantId = process.env.AZURE_TENANT_ID;
-    const clientId = process.env.AZURE_CLIENT_ID;
-    const clientSecret = process.env.AZURE_CLIENT_SECRET;
     const mongoUri = process.env.MONGODB_URI;
 
-    // Exemplo de pegar um token diretamente da Azure AD (sem login interativo)
-    const tokenResponse = await fetch(
-      `https://login.microsoftonline.com/${tenantId}/oauth2/v2.0/token`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          client_id: clientId,
-          client_secret: clientSecret,
-          scope: "https://graph.microsoft.com/.default",
-          grant_type: "client_credentials",
-        }),
-      }
-    );
+    // Pegar token do Graph via Azure CLI
+    const token = execSync(
+      'az account get-access-token --resource https://graph.microsoft.com --query accessToken -o tsv',
+      { encoding: 'utf-8' }
+    ).trim();
 
-    const tokenData = await tokenResponse.json();
+    console.log("✅ Token obtido com sucesso via Azure CLI!");
 
-    if (!tokenData.access_token) {
-      throw new Error(`Erro ao obter token: ${JSON.stringify(tokenData)}`);
-    }
-
-    console.log("✅ Token obtido com sucesso!");
-
-    // Exemplo de chamada ao Microsoft Graph
-    const graphResponse = await fetch("https://graph.microsoft.com/v1.0/users", {
-      headers: { Authorization: `Bearer ${tokenData.access_token}` },
+    // Chamada ao Microsoft Graph
+    const usersResponse = await fetch("https://graph.microsoft.com/v1.0/users", {
+      headers: { Authorization: `Bearer ${token}` },
     });
 
-    const users = await graphResponse.json();
-
+    const users = await usersResponse.json();
     console.log(`Usuários retornados: ${users.value?.length || 0}`);
 
     // Conectar no MongoDB e salvar
@@ -59,3 +38,7 @@ async function main() {
 }
 
 main();
+main().catch(err => {
+  console.error("Erro ao executar o script:", err);
+  process.exit(1);
+});
