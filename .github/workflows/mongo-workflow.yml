@@ -35,7 +35,7 @@ jobs:
 
       - name: Instalar MongoDB Shell (mongosh) rápido
         run: |
-          wget -q https://downloads.mongodb.com/compass/mongosh/mongosh-1.11.1-linux-x64.tgz
+          wget -q https://downloads.mongodb.com/compass/mongodb-mongosh_2.5.6_amd64.deb
           tar -xzf mongosh-1.11.1-linux-x64.tgz
           sudo mv mongosh-1.11.1-linux-x64/bin/mongosh /usr/local/bin/
           mongosh --version
