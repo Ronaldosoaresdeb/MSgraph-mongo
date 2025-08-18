@@ -26,13 +26,12 @@ jobs:
           TOKEN=$(az account get-access-token --resource https://management.azure.com --query accessToken -o tsv)
           echo "AZURE_TOKEN=$TOKEN" >> $GITHUB_ENV
           
-      - name: Instalar MongoDB Shell (mongosh) versão 2.5.6
+      - name: Instalar MongoDB Shell
         run: |
           wget -q https://downloads.mongodb.com/compass/mongodb-mongosh_2.5.6_amd64.deb
           sudo dpkg -i mongodb-mongosh_2.5.6_amd64.deb
-          sudo apt-get install -f -y  # Instala dependências que faltarem
+          sudo apt-get install -f -y
           mongosh --version
-
     
       - name: Instalar dependências do Node
         run: npm install
