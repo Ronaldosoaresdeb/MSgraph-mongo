@@ -1,39 +1,56 @@
-import { execSync } from "child_process";
 import { MongoClient } from "mongodb";
 
 async function main() {
   try {
-    //const mongoUri = process.env.MONGODB_URI;
-    const mongoUri = "mongodb+srv://wwwstudiowave:${{ secrets.MONGO_PASS }}@cluster0.revc365.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-    // Pegar token do Graph via Azure CLI
-    const token = execSync(
-      'az account get-access-token --resource https://graph.microsoft.com --query accessToken -o tsv',
-      { encoding: 'utf-8' }
-    ).trim();
+    const mongoUri = process.env.MONGODB_URI;
+    const token = process.env.AZURE_TOKEN;
+    const subscriptionId = process.env.SUBSCRIPTION_ID;
 
-    console.log("✅ Token obtido com sucesso via Azure CLI!");
+    if (!mongoUri || !token || !subscriptionId) {
+      throw new Error("⚠️ Variáveis de ambiente faltando (MONGODB_URI, AZURE_TOKEN, SUBSCRIPTION_ID)");
+    }
 
-    // Chamada ao Microsoft Graph
-    const usersResponse = await fetch("https://graph.microsoft.com/v1.0/users", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const users = await usersResponse.json();
-    console.log(`Usuários retornados: ${users.value?.length || 0}`);
-    
-    // Conectar no MongoDB e salvar
-    console.log("Conectando ao MongoDB...");
-   
-    const client = new MongoClient(mongoUri, {
-    serverSelectionTimeoutMS: 10000,
-   });
-
+    // Conectar no MongoDB
+    const client = new MongoClient(mongoUri, { serverSelectionTimeoutMS: 10000 });
     await client.connect();
     const db = client.db("resorceAzure");
-    const collection = db.collection("azresource");
+    const collection = db.collection("azure-resourceblob");
 
-    await collection.insertMany(users.value || []);
-    console.log("✅ Dados inseridos no MongoDB");
+    // Query Resource Graph
+    const query = `
+      resources
+      | where type == "microsoft.storage/storageaccounts"
+      | project name, id, location, resourceGroup
+    `;
+
+    const response = await fetch(
+      `https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          subscriptions: [subscriptionId],
+          query,
+        }),
+      }
+    );
+
+    if (!response.ok) throw new Error(`Erro no Resource Graph: ${response.statusText}`);
+
+    const result = await response.json();
+    const resources = result.data || [];
+
+    console.log(`🔎 Storage Accounts encontrados: ${resources.length}`);
+
+    if (resources.length > 0) {
+      await collection.insertMany(resources);
+      console.log("✅ Dados inseridos no MongoDB!");
+    } else {
+      console.log("⚠️ Nenhum recurso encontrado.");
+    }
 
     await client.close();
   } catch (err) {
