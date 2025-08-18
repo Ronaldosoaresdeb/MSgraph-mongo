@@ -19,6 +19,7 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
       - name: Obter token do Azure
         id: get_token
         run: |
@@ -43,6 +44,7 @@ jobs:
         run: node scripts/coletar.js
         env:
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_TOKEN: ${{ steps.get_token.outputs.token }}
           AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
