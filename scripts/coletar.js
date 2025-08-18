@@ -4,7 +4,7 @@ async function main() {
   try {
     const mongoUri = process.env.MONGODB_URI;
     const token = process.env.AZURE_TOKEN;
-    const subscriptionId = process.env.SUBSCRIPTION_ID;
+    const azurecredentians = process.env.AZURE_CREDENTIALS;
 
     if (!mongoUri || !token || !subscriptionId) {
       throw new Error("⚠️ Variáveis de ambiente faltando (MONGODB_URI, AZURE_TOKEN, SUBSCRIPTION_ID)");
