@@ -4,9 +4,11 @@ async function main() {
   try {
     const mongoUri = process.env.MONGODB_URI;
     const token = process.env.AZURE_TOKEN;
-    const azurecredentians = process.env.AZURE_CREDENTIALS;
+    const azureCredentials = JSON.parse(process.env.AZURE_CREDENTIALS);
+    const subscriptionId = azureCredentials.subscriptionId;
+    
 
-    if (!mongoUri || !token || !azurecredentians) {
+    if (!mongoUri || !token || !subscriptionId) {
       throw new Error("⚠️ Variáveis de ambiente faltando (MONGODB_URI, AZURE_TOKEN, AZURE_CREDENTIALS)");
     }
 
@@ -32,7 +34,7 @@ async function main() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          subscriptions: [azurecredentians],
+          subscriptions: [subscriptionId],
           query,
         }),
       }
