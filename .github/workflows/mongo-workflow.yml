@@ -43,6 +43,6 @@ jobs:
       - name: Executar script de coleta
         run: node scripts/coletar.js
         env:
-          AZURE_TOKEN: ${{ steps.get_token.outputs.token }}
+          AZURE_TOKEN: ${{ env.AZURE_TOKEN }}
           AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
           MONGODB_URI: ${{ secrets.MONGODB_URI }}

@@ -7,7 +7,7 @@ async function main() {
     const azurecredentians = process.env.AZURE_CREDENTIALS;
 
     if (!mongoUri || !token || !subscriptionId) {
-      throw new Error("⚠️ Variáveis de ambiente faltando (MONGODB_URI, AZURE_TOKEN, SUBSCRIPTION_ID)");
+      throw new Error("⚠️ Variáveis de ambiente faltando (MONGODB_URI, AZURE_TOKEN, AZURE_CREDENTIALS)");
     }
 
     // Conectar no MongoDB
