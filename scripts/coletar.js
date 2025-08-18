@@ -6,7 +6,6 @@ async function main() {
     const token = process.env.AZURE_TOKEN;
     const azureCredentials = JSON.parse(process.env.AZURE_CREDENTIALS);
     const subscriptionId = azureCredentials.subscriptionId;
-    
 
     if (!mongoUri || !token || !subscriptionId) {
       throw new Error("⚠️ Variáveis de ambiente faltando (MONGODB_URI, AZURE_TOKEN, subscriptionId)");
@@ -48,8 +47,23 @@ async function main() {
     console.log(`🔎 Storage Accounts encontrados: ${resources.length}`);
 
     if (resources.length > 0) {
-      await collection.insertMany(resources);
-      console.log("✅ Dados inseridos no MongoDB!");
+      const novosInseridos = [];
+      for (const res of resources) {
+        // Checar se já existe pelo nome
+        const existe = await collection.findOne({ name: res.name });
+        if (existe) {
+          console.log(`⚠️ Recurso já existe: ${res.name}`);
+        } else {
+          await collection.insertOne(res);
+          novosInseridos.push(res.name);
+        }
+      }
+
+      if (novosInseridos.length > 0) {
+        console.log(`✅ Novos recursos inseridos: ${novosInseridos.join(", ")}`);
+      } else {
+        console.log("⚠️ Nenhum novo recurso foi inserido.");
+      }
     } else {
       console.log("⚠️ Nenhum recurso encontrado.");
     }
