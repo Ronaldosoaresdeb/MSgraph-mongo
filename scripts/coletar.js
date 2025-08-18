@@ -9,7 +9,7 @@ async function main() {
     
 
     if (!mongoUri || !token || !subscriptionId) {
-      throw new Error("⚠️ Variáveis de ambiente faltando (MONGODB_URI, AZURE_TOKEN, AZURE_CREDENTIALS)");
+      throw new Error("⚠️ Variáveis de ambiente faltando (MONGODB_URI, AZURE_TOKEN, subscriptionId)");
     }
 
     // Conectar no MongoDB
