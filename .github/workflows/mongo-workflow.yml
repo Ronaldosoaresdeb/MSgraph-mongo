@@ -26,13 +26,11 @@ jobs:
           TOKEN=$(az account get-access-token --resource https://management.azure.com --query accessToken -o tsv)
           echo "AZURE_TOKEN=$TOKEN" >> $GITHUB_ENV
           
-      - name: Instalar MongoDB Shell (mongosh) rápido
+      - name: Instalar MongoDB Shell (mongosh)
         run: |
-          wget -q https://downloads.mongodb.com/compass/mongosh/mongosh-1.11.1-linux-x64.tgz
-          tar -xzf mongosh-1.11.1-linux-x64.tgz
-          sudo mv mongosh-1.11.1-linux-x64/bin/mongosh /usr/local/bin/
-          mongosh --version
-
+          curl -fsSL https://pgp.mongodb.com/server-6.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg --dearmor
+          echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+          sudo apt-get install -y mongodb-mongosh
 
       - name: Instalar dependências do Node
         run: npm install
