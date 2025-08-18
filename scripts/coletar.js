@@ -32,7 +32,7 @@ async function main() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          subscriptions: [subscriptionId],
+          subscriptions: [azurecredentians],
           query,
         }),
       }
