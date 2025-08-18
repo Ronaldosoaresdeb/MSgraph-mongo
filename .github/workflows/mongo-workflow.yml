@@ -33,6 +33,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mongodb-mongosh
 
+      - name: Instalar MongoDB Shell (mongosh) rápido
+        run: |
+          wget -q https://downloads.mongodb.com/compass/mongosh/mongosh-1.11.1-linux-x64.tgz
+          tar -xzf mongosh-1.11.1-linux-x64.tgz
+          sudo mv mongosh-1.11.1-linux-x64/bin/mongosh /usr/local/bin/
+          mongosh --version
+    
       - name: Instalar dependências do Node
         run: npm install
 
