@@ -6,7 +6,7 @@ async function main() {
     const token = process.env.AZURE_TOKEN;
     const azurecredentians = process.env.AZURE_CREDENTIALS;
 
-    if (!mongoUri || !token || !subscriptionId) {
+    if (!mongoUri || !token || !azurecredentians) {
       throw new Error("⚠️ Variáveis de ambiente faltando (MONGODB_URI, AZURE_TOKEN, AZURE_CREDENTIALS)");
     }
 
